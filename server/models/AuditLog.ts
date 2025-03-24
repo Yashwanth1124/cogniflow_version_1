@@ -1,8 +1,12 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { AuditLog as AuditLogType } from '../../shared/schema';
 
-export interface AuditLogDocument extends Document, Omit<AuditLogType, 'id'> {
-  _id: mongoose.Types.ObjectId;
+export interface AuditLogDocument extends Document {
+  userId: number;
+  action: string;
+  entityType: string;
+  entityId?: number;
+  details?: any;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,31 +27,13 @@ const auditLogSchema = new Schema<AuditLogDocument>(
       type: Schema.Types.Mixed,
       required: true,
     },
-    description: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    changes: {
+    details: {
       type: Schema.Types.Mixed,
       default: null,
-    },
-    ipAddress: {
-      type: String,
-      trim: true,
-    },
-    userAgent: {
-      type: String,
-      trim: true,
     },
     userId: {
       type: Number,
       required: true,
-    },
-    timestamp: {
-      type: Date,
-      required: true,
-      default: Date.now,
     },
   },
   {

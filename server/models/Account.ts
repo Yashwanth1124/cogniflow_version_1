@@ -1,8 +1,17 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { Account as AccountType } from '../../shared/schema';
 
-export interface AccountDocument extends Document, Omit<AccountType, 'id'> {
-  _id: mongoose.Types.ObjectId;
+export interface AccountDocument extends Document {
+  name: string;
+  type: string;
+  code: string;
+  description?: string;
+  balance: number;
+  currency: string;
+  isActive: boolean;
+  parentAccount?: mongoose.Types.ObjectId;
+  notes?: string;
+  createdBy: number;
   createdAt: Date;
   updatedAt: Date;
 }

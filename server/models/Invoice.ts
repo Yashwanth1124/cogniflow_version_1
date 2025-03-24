@@ -1,8 +1,17 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { Invoice as InvoiceType } from '../../shared/schema';
 
-export interface InvoiceDocument extends Document, Omit<InvoiceType, 'id'> {
-  _id: mongoose.Types.ObjectId;
+export interface InvoiceDocument extends Document {
+  invoiceNumber: string;
+  clientName: string;
+  amount: number;
+  currency: string;
+  issueDate: Date;
+  dueDate: Date;
+  status: string;
+  type: string;
+  notes?: string;
+  createdBy: number;
   createdAt: Date;
   updatedAt: Date;
 }

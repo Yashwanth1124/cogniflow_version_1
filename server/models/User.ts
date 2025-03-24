@@ -1,8 +1,13 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { User as UserType } from '../../shared/schema';
 
-export interface UserDocument extends Document, Omit<UserType, 'id'> {
-  _id: mongoose.Types.ObjectId;
+export interface UserDocument extends Document {
+  username: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  role: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,10 +45,6 @@ const userSchema = new Schema<UserDocument>(
       type: String,
       enum: ['admin', 'accountant', 'manager', 'user'],
       default: 'user',
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
     },
   },
   {

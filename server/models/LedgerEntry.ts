@@ -1,8 +1,15 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { LedgerEntry as LedgerEntryType } from '../../shared/schema';
 
-export interface LedgerEntryDocument extends Document, Omit<LedgerEntryType, 'id'> {
-  _id: mongoose.Types.ObjectId;
+export interface LedgerEntryDocument extends Document {
+  entryNumber: string;
+  description: string;
+  accountName: string;
+  debit: number;
+  credit: number;
+  date: Date;
+  transactionId?: number;
+  createdBy: number;
   createdAt: Date;
   updatedAt: Date;
 }

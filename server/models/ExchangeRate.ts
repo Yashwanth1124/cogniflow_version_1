@@ -1,8 +1,14 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { ExchangeRate as ExchangeRateType } from '../../shared/schema';
 
-export interface ExchangeRateDocument extends Document, Omit<ExchangeRateType, 'id'> {
-  _id: mongoose.Types.ObjectId;
+export interface ExchangeRateDocument extends Document {
+  baseCurrency: string;
+  targetCurrency: string;
+  rate: number;
+  date: Date;
+  source?: string;
+  notes?: string;
+  createdBy: number;
   createdAt: Date;
   updatedAt: Date;
 }
