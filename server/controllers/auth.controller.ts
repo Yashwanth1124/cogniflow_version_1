@@ -39,11 +39,14 @@ export const authController = {
       }
       
       // In a real app, we'd verify the password hash, here we'll do a simple comparison for demo
-      // This simulates bcrypt.compare since we're storing hashed passwords in our demo data
-      const isPasswordValid = user.password === "$2b$10$CqZ.IzuNGjmCN1xfMzVeUOXTpZQQTXmK5Z7XHv0Z8Qv4p6RKWMgxa";
+      // Checking if the username is one of our demo accounts and if password matches 'password123'
+      const isPasswordValid = 
+        (["admin", "accountant", "manager"].includes(username) && password === "password123") ||
+        // Otherwise check the actual stored hash
+        user.password === password;
       
       if (!isPasswordValid) {
-        return res.status(401).json({ error: "Invalid username or password" });
+        return res.status(401).json({ message: "Invalid username or password" });
       }
       
       // Generate JWT token

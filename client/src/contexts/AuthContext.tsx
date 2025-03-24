@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (username: string, password: string) => {
     try {
       setLoading(true);
-      const response = await apiRequest<AuthResponse>("POST", "/api/auth/login", { username, password });
+      const response = await apiRequest<AuthResponse>("POST", "/auth/login", { username, password });
       
       if (response.token && response.user) {
         localStorage.setItem("token", response.token);
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLocation("/login");
     
     // Call logout endpoint
-    apiRequest("POST", "/api/auth/logout").catch(err => {
+    apiRequest("POST", "/auth/logout").catch(err => {
       console.error("Logout error:", err);
     });
     
@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     try {
       setLoading(true);
-      const response = await apiRequest<{ user: AuthContextType["user"] }>("GET", "/api/auth/user");
+      const response = await apiRequest<{ user: AuthContextType["user"] }>("GET", "/auth/user");
       
       if (response.user) {
         setUser(response.user);

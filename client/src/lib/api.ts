@@ -16,7 +16,9 @@ export async function apiRequest<T = any>(
   data?: unknown,
   options?: FetchOptions
 ): Promise<T> {
-  const url = new URL(`/api${endpoint}`, window.location.origin);
+  // Don't prepend /api if the endpoint already starts with it
+  const apiPath = endpoint.startsWith('/api') ? endpoint : `/api${endpoint}`;
+  const url = new URL(apiPath, window.location.origin);
   
   // Add query parameters if provided
   if (options?.params) {
