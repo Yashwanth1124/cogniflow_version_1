@@ -1,8 +1,13 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { AiInsight as AiInsightType } from '../../shared/schema';
 
-export interface AiInsightDocument extends Document, Omit<AiInsightType, 'id'> {
-  _id: mongoose.Types.ObjectId;
+export interface AiInsightDocument extends Document {
+  type: string;
+  title: string;
+  description: string;
+  severity: string;
+  data?: any;
+  isRead: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
