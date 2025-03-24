@@ -1,0 +1,98 @@
+I need a **full-stack ERP system** named **Cogniflow**, built using **MERN stack (MongoDB, Express.js, React, Node.js)** with advanced financial and AI-powered capabilities.
+
+---
+
+# **💡 System Overview**
+Cogniflow is a **Construction ERP system** with the following features:
+✅ **Landing Page:** Modern UI with Tailwind, showcasing ERP features  
+✅ **Authentication System:** JWT-based authentication, Sign-Up & Sign-In pages  
+✅ **Backend:** Node.js + Express.js (REST APIs, Secure Transactions)  
+✅ **Frontend:** React.js + Tailwind CSS (AI-powered Dashboard)  
+✅ **Database:** MongoDB with optimized schemas, Redis caching for performance  
+✅ **Performance & Scalability:** Docker for deployment, API rate limiting, MongoDB indexing  
+✅ **AI-Powered Financial Insights:** Predictive analytics, anomaly detection in transactions  
+
+---
+
+# **🖥 Frontend Features (React.js + Tailwind CSS)**
+✅ **1. Landing Page**
+- Beautiful UI with Tailwind  
+- Call-To-Action (Signup/Login)  
+- Overview of ERP features (Finance, AI, Compliance)  
+
+✅ **2. User Authentication**
+- **Sign-Up & Sign-In Forms** (React Forms + Validation)  
+- **JWT Authentication** (Store token securely in HTTP-only cookies)  
+- **Redirect Users to Dashboard After Login**  
+
+✅ **3. Role-Based Dashboard**
+- **Admin Dashboard:** User & role management, system alerts  
+- **Finance Dashboard:** Real-time financial KPIs, budget tracking  
+
+✅ **4. Finance Module Screens**
+- **General Ledger UI:** Journal entry management, real-time reconciliation  
+- **Accounts Payable/Receivable:** Invoice tracking, vendor/customer payments  
+- **Multi-Currency Support:** Automated currency conversion with historical data  
+
+✅ **5. AI-Powered Financial Insights**
+- Predictive analytics for revenue forecasting  
+- Fraud detection alerts for suspicious transactions  
+- Automated anomaly detection in expense reports  
+
+✅ **6. Data Visualization & Reporting**
+- **Charts & Graphs:** Real-time cash flow, expense tracking  
+- **Downloadable Reports:** PDF export for financial reports  
+
+✅ **7. Performance & Optimization**
+- **Optimized API calls using React Query**  
+- **Lazy loading of components for fast performance**  
+- **State management using Redux Toolkit**  
+
+✅ **8. Deployment & CI/CD**
+- **Vite + React for fast frontend builds**  
+- **Docker setup for seamless deployment**  
+- **Automated tests using Jest + Cypress**  
+
+---
+
+# **🛠 Backend Features (Node.js + Express + MongoDB)**
+✅ **1. Authentication & Security (JWT + RBAC)**
+- JWT authentication with refresh tokens  
+- Role-Based Access Control (Admin, Accountant, Manager)  
+- AES-256 encryption for sensitive financial data  
+- Audit logging for compliance tracking  
+
+✅ **2. Finance & Accounting Module**
+- **General Ledger API:** Double-entry accounting (Debit/Credit), Journal Entries, Account Reconciliation  
+- **Accounts Payable & Receivable:** Invoice management, payment tracking, automated due reminders  
+- **Multi-Currency Support:** Fetch live exchange rates via OpenExchangeRates API  
+- **AI-Powered Financial Reports:** Automate cash flow analysis, balance sheet generation, and fraud detection  
+
+✅ **3. Database Design (MongoDB + Mongoose)**
+- **Collections:** Users, Roles, Transactions, Invoices, Exchange Rates, Audit Logs, Assets  
+- **Optimizations:** MongoDB indexing for fast queries, Redis caching for frequently accessed data  
+
+✅ **4. Performance Optimization & Security**
+- API rate limiting to prevent abuse  
+- Redis caching for financial reports  
+- Asynchronous data processing for large financial calculations  
+
+✅ **5. Logging & Compliance**
+- **Audit Logging:** Track all financial transactions & system changes  
+- **Compliance Reports:** Generate tax reports, financial compliance summaries  
+
+✅ **6. Deployment & Monitoring**
+- **Docker containerization** for scalable deployment  
+- **CI/CD Pipeline** for automated deployment on AWS or Render  
+- **Monitoring Tools:** Prometheus & Grafana for API health monitoring  
+
+---
+
+# **🎯 Deliverables Expected from Replit AI**
+- **Modular Backend Structure** (Express API with controllers, routes, middleware)  
+- **Fully Functional Finance Module** (Ledger, Invoices, Reporting)  
+- **Optimized MongoDB Schemas** (Indexing, caching, performance tuning)  
+- **Complete Frontend UI** (Landing Page, Authentication, Role-based Navigation)  
+- **Deployment-ready Docker setup**  
+
+**➡ Generate an advanced, secure, and scalable ERP system with AI-powered insights, financial automation, and real-time analytics.**  
