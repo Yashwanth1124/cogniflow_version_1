@@ -330,7 +330,7 @@ const GeneralLedger = () => {
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Accounts</SelectItem>
+                <SelectItem value="all">All Accounts</SelectItem>
                 {accounts?.map(account => (
                   <SelectItem key={account.id} value={account.name}>
                     {account.name}
