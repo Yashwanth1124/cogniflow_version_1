@@ -1,8 +1,16 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { Transaction as TransactionType } from '../../shared/schema';
 
-export interface TransactionDocument extends Document, Omit<TransactionType, 'id'> {
-  _id: mongoose.Types.ObjectId;
+export interface TransactionDocument extends Document {
+  transactionNumber: string;
+  description: string;
+  amount: number;
+  currency: string;
+  type: string;
+  category: string;
+  date: Date;
+  status: string;
+  createdBy: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -46,16 +54,7 @@ const transactionSchema = new Schema<TransactionDocument>(
     },
     date: {
       type: Date,
-      required: true,
       default: Date.now,
-    },
-    relatedDocuments: {
-      type: [String],
-      default: [],
-    },
-    notes: {
-      type: String,
-      trim: true,
     },
     createdBy: {
       type: Number,
