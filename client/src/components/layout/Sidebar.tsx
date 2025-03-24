@@ -60,15 +60,15 @@ const Sidebar = () => {
           {/* Dashboard Section */}
           <div className="space-y-1">
             <Link href="/">
-              <a className={cn(
-                "flex items-center px-3 py-2 text-sm font-medium rounded-md",
+              <span className={cn(
+                "flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer",
                 isActive("/")
                   ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-100"
                   : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               )}>
                 <Home className="w-5 h-5 mr-2" />
                 Dashboard
-              </a>
+              </span>
             </Link>
           </div>
 
@@ -91,44 +91,44 @@ const Sidebar = () => {
             {openMenus.finance && (
               <div className="mt-1 space-y-1 pl-6">
                 <Link href="/finance/general-ledger">
-                  <a className={cn(
-                    "flex items-center px-3 py-2 text-sm font-medium rounded-md",
+                  <span className={cn(
+                    "flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer",
                     isActive("/finance/general-ledger")
                       ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-100"
                       : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   )}>
                     General Ledger
-                  </a>
+                  </span>
                 </Link>
                 <Link href="/finance/accounts-payable">
-                  <a className={cn(
-                    "flex items-center px-3 py-2 text-sm font-medium rounded-md",
+                  <span className={cn(
+                    "flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer",
                     isActive("/finance/accounts-payable")
                       ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-100"
                       : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   )}>
                     Accounts Payable
-                  </a>
+                  </span>
                 </Link>
                 <Link href="/finance/accounts-receivable">
-                  <a className={cn(
-                    "flex items-center px-3 py-2 text-sm font-medium rounded-md",
+                  <span className={cn(
+                    "flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer",
                     isActive("/finance/accounts-receivable")
                       ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-100"
                       : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   )}>
                     Accounts Receivable
-                  </a>
+                  </span>
                 </Link>
                 <Link href="/finance/reports">
-                  <a className={cn(
-                    "flex items-center px-3 py-2 text-sm font-medium rounded-md",
+                  <span className={cn(
+                    "flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer",
                     isActive("/finance/reports")
                       ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-100"
                       : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   )}>
                     Financial Reports
-                  </a>
+                  </span>
                 </Link>
               </div>
             )}
@@ -152,15 +152,21 @@ const Sidebar = () => {
 
             {openMenus.projects && (
               <div className="mt-1 space-y-1 pl-6">
-                <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  Project Dashboard
-                </a>
-                <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  Manage Projects
-                </a>
-                <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  Schedule & Timeline
-                </a>
+                <Link href="/projects/dashboard">
+                  <span className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                    Project Dashboard
+                  </span>
+                </Link>
+                <Link href="/projects/manage">
+                  <span className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                    Manage Projects
+                  </span>
+                </Link>
+                <Link href="/projects/schedule">
+                  <span className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                    Schedule & Timeline
+                  </span>
+                </Link>
               </div>
             )}
           </div>
@@ -183,15 +189,21 @@ const Sidebar = () => {
 
             {openMenus.inventory && (
               <div className="mt-1 space-y-1 pl-6">
-                <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  Materials
-                </a>
-                <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  Equipment
-                </a>
-                <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  Suppliers
-                </a>
+                <Link href="/inventory/materials">
+                  <span className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                    Materials
+                  </span>
+                </Link>
+                <Link href="/inventory/equipment">
+                  <span className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                    Equipment
+                  </span>
+                </Link>
+                <Link href="/inventory/suppliers">
+                  <span className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                    Suppliers
+                  </span>
+                </Link>
               </div>
             )}
           </div>
@@ -199,15 +211,15 @@ const Sidebar = () => {
           {/* Settings */}
           <div className="mt-4">
             <Link href="/settings">
-              <a className={cn(
-                "flex items-center px-3 py-2 text-sm font-medium rounded-md",
+              <span className={cn(
+                "flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer",
                 isActive("/settings")
                   ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-100"
                   : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               )}>
                 <Settings className="w-5 h-5 mr-2" />
                 Settings
-              </a>
+              </span>
             </Link>
           </div>
         </ScrollArea>
