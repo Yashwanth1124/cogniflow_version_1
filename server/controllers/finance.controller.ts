@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import Transaction from "../models/Transaction";
 import { storage } from "../storage";
 import { z } from "zod";
 import {
@@ -13,95 +12,83 @@ import { KpiData, ChartData, AiInsightData } from "@shared/types";
 import { aiService } from "../services/ai.service";
 
 export const financeController = {
-  async getTransactions(req: Request, res: Response) {
+  // Dashboard endpoints
+  getFinancialKpis: async (req: Request, res: Response) => {
     try {
-      const transactions = await Transaction.find()
-        .sort({ date: -1 })
-        .limit(10);
-      res.json(transactions);
+      // Get account balances
+      const cashAccount = await storage.getAccountByName("Cash");
+      const receivablesAccount = await storage.getAccountByName("Accounts Receivable");
+      const revenueAccount = await storage.getAccountByName("Revenue");
+      const expensesAccount = await storage.getAccountByName("Expenses");
+      
+      // Get month-over-month changes (simulated for demo)
+      const kpis: KpiData[] = [
+        {
+          title: "Cash Flow",
+          value: `$${cashAccount?.balance.toLocaleString() || "0"}`,
+          change: 8.2,
+          changeText: "from last month",
+          icon: "dollar-sign",
+          iconBgClass: "bg-green-100 dark:bg-green-900/30",
+          iconColorClass: "text-green-500"
+        },
+        {
+          title: "Outstanding Invoices",
+          value: `$${receivablesAccount?.balance.toLocaleString() || "0"}`,
+          change: -3.5,
+          changeText: "from last month",
+          icon: "file-text",
+          iconBgClass: "bg-amber-100 dark:bg-amber-900/30",
+          iconColorClass: "text-amber-500"
+        },
+        {
+          title: "Total Revenue",
+          value: `$${revenueAccount?.balance.toLocaleString() || "0"}`,
+          change: 12.7,
+          changeText: "from last month",
+          icon: "bar-chart-2",
+          iconBgClass: "bg-blue-100 dark:bg-blue-900/30",
+          iconColorClass: "text-blue-500"
+        },
+        {
+          title: "Expenses",
+          value: `$${expensesAccount?.balance.toLocaleString() || "0"}`,
+          change: 2.3,
+          changeText: "from last month",
+          icon: "credit-card",
+          iconBgClass: "bg-red-100 dark:bg-red-900/30",
+          iconColorClass: "text-red-500"
+        }
+      ];
+      
+      return res.status(200).json(kpis);
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch transactions" });
+      console.error("Error fetching KPIs:", error);
+      return res.status(500).json({ error: "Failed to fetch financial KPIs" });
     }
   },
-
-  async createTransaction(req: Request, res: Response) {
-    try {
-      const transaction = new Transaction({
-        ...req.body,
-        createdBy: req.user?.id
-      });
-      await transaction.save();
-      res.status(201).json(transaction);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to create transaction" });
-    }
-  },
-
-  async getTransactionById(req: Request, res: Response) {
-    try {
-      const transaction = await Transaction.findById(req.params.id);
-      if (!transaction) {
-        return res.status(404).json({ error: "Transaction not found" });
-      }
-      res.json(transaction);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch transaction" });
-    }
-  },
-
-  async updateTransaction(req: Request, res: Response) {
-    try {
-      const transaction = await Transaction.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
-      );
-      if (!transaction) {
-        return res.status(404).json({ error: "Transaction not found" });
-      }
-      res.json(transaction);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to update transaction" });
-    }
-  },
-
-  async getFinancialKpis(req: Request, res: Response) {
-    try {
-      const transactions = await Transaction.find();
-      const income = transactions
-        .filter(t => t.type === 'income')
-        .reduce((sum, t) => sum + t.amount, 0);
-      const expenses = transactions
-        .filter(t => t.type === 'expense')
-        .reduce((sum, t) => sum + t.amount, 0);
-
-      res.json([
-        { title: "Cash Flow", value: `$${income - expenses}`, trend: "up" },
-        { title: "Revenue", value: `$${income}`, trend: "up" },
-        { title: "Expenses", value: `$${expenses}`, trend: "down" }
-      ]);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch KPIs" });
-    }
-  },
-
+  
   getRevenueChartData: async (req: Request, res: Response) => {
-    res.json({
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-      datasets: [{
-        label: "Revenue",
-        data: [65, 59, 80, 81, 56, 55],
-      }]
-    });
-  },
-
-  getExpenseCategoriesChartData: async (req: Request, res: Response) => {
-    res.json({
-      labels: ["Materials", "Labor", "Overhead", "Marketing", "R&D"],
-      datasets: [{
-        data: [30, 25, 20, 15, 10],
-      }]
-    });
+    try {
+      // Simulated monthly revenue data for the past 6 months
+      const chartData: ChartData = {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        datasets: [
+          {
+            label: "Revenue",
+            data: [87000, 92000, 105000, 108000, 112000, 118000],
+            borderColor: "rgba(59, 130, 246, 1)",
+            backgroundColor: "rgba(59, 130, 246, 0.1)",
+            borderWidth: 2
+          }
+        ]
+      };
+      
+      return res.status(200).json(chartData);
+    } catch (error) {
+      console.error("Error fetching revenue chart data:", error);
+      return res.status(500).json({ error: "Failed to fetch revenue chart data" });
+    }
   },
   
   getExpenseCategoriesChartData: async (req: Request, res: Response) => {
@@ -123,25 +110,25 @@ export const financeController = {
           }
         ]
       };
-
+      
       return res.status(200).json(chartData);
     } catch (error) {
       console.error("Error fetching expense categories chart data:", error);
       return res.status(500).json({ error: "Failed to fetch expense categories chart data" });
     }
   },
-
+  
   getAiInsights: async (req: Request, res: Response) => {
     try {
       // Get AI insights from storage
       const insights = await storage.getAiInsights();
-
+      
       // Transform to the expected format
       const formattedInsights: AiInsightData[] = insights.map(insight => {
         // Determine icon and style based on type
         let iconBgClass = "bg-purple-100 dark:bg-purple-900/20";
         let iconColorClass = "text-purple-600 dark:text-purple-300";
-
+        
         if (insight.type === "prediction") {
           iconBgClass = "bg-green-100 dark:bg-green-900/20";
           iconColorClass = "text-green-600 dark:text-green-300";
@@ -152,7 +139,7 @@ export const financeController = {
           iconBgClass = "bg-amber-100 dark:bg-amber-900/20";
           iconColorClass = "text-amber-600 dark:text-amber-300";
         }
-
+        
         return {
           type: insight.type as any,
           title: insight.title,
@@ -164,86 +151,197 @@ export const financeController = {
           iconColorClass
         };
       });
-
+      
       return res.status(200).json(formattedInsights);
     } catch (error) {
       console.error("Error fetching AI insights:", error);
       return res.status(500).json({ error: "Failed to fetch AI insights" });
     }
   },
-
+  
   markAiInsightAsRead: async (req: Request, res: Response) => {
     try {
       const insightId = parseInt(req.params.id);
-
+      
       if (isNaN(insightId)) {
         return res.status(400).json({ error: "Invalid insight ID" });
       }
-
+      
       const insight = await storage.getAiInsight(insightId);
-
+      
       if (!insight) {
         return res.status(404).json({ error: "Insight not found" });
       }
-
+      
       const updatedInsight = await storage.updateAiInsight(insightId, { isRead: true });
-
+      
       return res.status(200).json(updatedInsight);
     } catch (error) {
       console.error("Error marking insight as read:", error);
       return res.status(500).json({ error: "Failed to mark insight as read" });
     }
   },
-
-
+  
+  // Transaction endpoints
+  getTransactions: async (req: Request, res: Response) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const transactions = await storage.getTransactions(limit);
+      
+      return res.status(200).json(transactions);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      return res.status(500).json({ error: "Failed to fetch transactions" });
+    }
+  },
+  
+  getTransactionById: async (req: Request, res: Response) => {
+    try {
+      const transactionId = parseInt(req.params.id);
+      
+      if (isNaN(transactionId)) {
+        return res.status(400).json({ error: "Invalid transaction ID" });
+      }
+      
+      const transaction = await storage.getTransaction(transactionId);
+      
+      if (!transaction) {
+        return res.status(404).json({ error: "Transaction not found" });
+      }
+      
+      return res.status(200).json(transaction);
+    } catch (error) {
+      console.error("Error fetching transaction:", error);
+      return res.status(500).json({ error: "Failed to fetch transaction" });
+    }
+  },
+  
+  createTransaction: async (req: Request, res: Response) => {
+    try {
+      // Validate request body
+      const validatedData = insertTransactionSchema.parse(req.body);
+      
+      // Set created by to current user
+      const userId = (req as any).user?.id;
+      validatedData.createdBy = userId;
+      
+      // Create transaction
+      const transaction = await storage.createTransaction(validatedData);
+      
+      // Log audit trail
+      await storage.createAuditLog({
+        userId,
+        action: "CREATE",
+        entityType: "transaction",
+        entityId: transaction.id,
+        details: { transactionNumber: transaction.transactionNumber }
+      });
+      
+      // Check for anomalies using AI service
+      aiService.detectAnomalies([transaction]);
+      
+      return res.status(201).json(transaction);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      
+      console.error("Error creating transaction:", error);
+      return res.status(500).json({ error: "Failed to create transaction" });
+    }
+  },
+  
+  updateTransaction: async (req: Request, res: Response) => {
+    try {
+      const transactionId = parseInt(req.params.id);
+      
+      if (isNaN(transactionId)) {
+        return res.status(400).json({ error: "Invalid transaction ID" });
+      }
+      
+      // Get existing transaction
+      const existingTransaction = await storage.getTransaction(transactionId);
+      
+      if (!existingTransaction) {
+        return res.status(404).json({ error: "Transaction not found" });
+      }
+      
+      // Validate request body (partial update)
+      const validatedData = insertTransactionSchema.partial().parse(req.body);
+      
+      // Update transaction
+      const updatedTransaction = await storage.updateTransaction(transactionId, validatedData);
+      
+      // Log audit trail
+      const userId = (req as any).user?.id;
+      await storage.createAuditLog({
+        userId,
+        action: "UPDATE",
+        entityType: "transaction",
+        entityId: transactionId,
+        details: { changes: validatedData }
+      });
+      
+      return res.status(200).json(updatedTransaction);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      
+      console.error("Error updating transaction:", error);
+      return res.status(500).json({ error: "Failed to update transaction" });
+    }
+  },
+  
+  // Invoice endpoints
   getInvoices: async (req: Request, res: Response) => {
     try {
       const type = req.query.type as string | undefined;
       const status = req.query.status as string | undefined;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-
+      
       const invoices = await storage.getInvoices(type, status, limit);
-
+      
       return res.status(200).json(invoices);
     } catch (error) {
       console.error("Error fetching invoices:", error);
       return res.status(500).json({ error: "Failed to fetch invoices" });
     }
   },
-
+  
   getInvoiceById: async (req: Request, res: Response) => {
     try {
       const invoiceId = parseInt(req.params.id);
-
+      
       if (isNaN(invoiceId)) {
         return res.status(400).json({ error: "Invalid invoice ID" });
       }
-
+      
       const invoice = await storage.getInvoice(invoiceId);
-
+      
       if (!invoice) {
         return res.status(404).json({ error: "Invoice not found" });
       }
-
+      
       return res.status(200).json(invoice);
     } catch (error) {
       console.error("Error fetching invoice:", error);
       return res.status(500).json({ error: "Failed to fetch invoice" });
     }
   },
-
+  
   createInvoice: async (req: Request, res: Response) => {
     try {
       // Validate request body
       const validatedData = insertInvoiceSchema.parse(req.body);
-
+      
       // Set created by to current user
       const userId = (req as any).user?.id;
       validatedData.createdBy = userId;
-
+      
       // Create invoice
       const invoice = await storage.createInvoice(validatedData);
-
+      
       // Log audit trail
       await storage.createAuditLog({
         userId,
@@ -252,39 +350,39 @@ export const financeController = {
         entityId: invoice.id,
         details: { invoiceNumber: invoice.invoiceNumber }
       });
-
+      
       return res.status(201).json(invoice);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors });
       }
-
+      
       console.error("Error creating invoice:", error);
       return res.status(500).json({ error: "Failed to create invoice" });
     }
   },
-
+  
   updateInvoice: async (req: Request, res: Response) => {
     try {
       const invoiceId = parseInt(req.params.id);
-
+      
       if (isNaN(invoiceId)) {
         return res.status(400).json({ error: "Invalid invoice ID" });
       }
-
+      
       // Get existing invoice
       const existingInvoice = await storage.getInvoice(invoiceId);
-
+      
       if (!existingInvoice) {
         return res.status(404).json({ error: "Invoice not found" });
       }
-
+      
       // Validate request body (partial update)
       const validatedData = insertInvoiceSchema.partial().parse(req.body);
-
+      
       // Update invoice
       const updatedInvoice = await storage.updateInvoice(invoiceId, validatedData);
-
+      
       // Log audit trail
       const userId = (req as any).user?.id;
       await storage.createAuditLog({
@@ -294,65 +392,66 @@ export const financeController = {
         entityId: invoiceId,
         details: { changes: validatedData }
       });
-
+      
       return res.status(200).json(updatedInvoice);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors });
       }
-
+      
       console.error("Error updating invoice:", error);
       return res.status(500).json({ error: "Failed to update invoice" });
     }
   },
-
+  
+  // Ledger entry endpoints
   getLedgerEntries: async (req: Request, res: Response) => {
     try {
       const accountName = req.query.accountName as string | undefined;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-
+      
       const entries = await storage.getLedgerEntries(accountName, limit);
-
+      
       return res.status(200).json(entries);
     } catch (error) {
       console.error("Error fetching ledger entries:", error);
       return res.status(500).json({ error: "Failed to fetch ledger entries" });
     }
   },
-
+  
   getLedgerEntryById: async (req: Request, res: Response) => {
     try {
       const entryId = parseInt(req.params.id);
-
+      
       if (isNaN(entryId)) {
         return res.status(400).json({ error: "Invalid ledger entry ID" });
       }
-
+      
       const entry = await storage.getLedgerEntry(entryId);
-
+      
       if (!entry) {
         return res.status(404).json({ error: "Ledger entry not found" });
       }
-
+      
       return res.status(200).json(entry);
     } catch (error) {
       console.error("Error fetching ledger entry:", error);
       return res.status(500).json({ error: "Failed to fetch ledger entry" });
     }
   },
-
+  
   createLedgerEntry: async (req: Request, res: Response) => {
     try {
       // Validate request body
       const validatedData = insertLedgerEntrySchema.parse(req.body);
-
+      
       // Set created by to current user
       const userId = (req as any).user?.id;
       validatedData.createdBy = userId;
-
+      
       // Create ledger entry
       const entry = await storage.createLedgerEntry(validatedData);
-
+      
       // Log audit trail
       await storage.createAuditLog({
         userId,
@@ -361,87 +460,88 @@ export const financeController = {
         entityId: entry.id,
         details: { entryNumber: entry.entryNumber }
       });
-
+      
       // Update account balance if necessary
       if (validatedData.accountName) {
         const account = await storage.getAccountByName(validatedData.accountName);
-
+        
         if (account) {
           // Calculate new balance (debit increases asset/expense, credit increases liability/equity/revenue)
           let balanceChange = 0;
-
+          
           if (account.type === "asset" || account.type === "expense") {
             balanceChange = Number(validatedData.debit || 0) - Number(validatedData.credit || 0);
           } else {
             balanceChange = Number(validatedData.credit || 0) - Number(validatedData.debit || 0);
           }
-
+          
           const newBalance = Number(account.balance) + balanceChange;
-
+          
           await storage.updateAccount(account.id, { balance: newBalance });
         }
       }
-
+      
       return res.status(201).json(entry);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors });
       }
-
+      
       console.error("Error creating ledger entry:", error);
       return res.status(500).json({ error: "Failed to create ledger entry" });
     }
   },
-
+  
+  // Account endpoints
   getAccounts: async (req: Request, res: Response) => {
     try {
       const type = req.query.type as string | undefined;
-
+      
       const accounts = await storage.getAccounts(type);
-
+      
       return res.status(200).json(accounts);
     } catch (error) {
       console.error("Error fetching accounts:", error);
       return res.status(500).json({ error: "Failed to fetch accounts" });
     }
   },
-
+  
   getAccountById: async (req: Request, res: Response) => {
     try {
       const accountId = parseInt(req.params.id);
-
+      
       if (isNaN(accountId)) {
         return res.status(400).json({ error: "Invalid account ID" });
       }
-
+      
       const account = await storage.getAccount(accountId);
-
+      
       if (!account) {
         return res.status(404).json({ error: "Account not found" });
       }
-
+      
       return res.status(200).json(account);
     } catch (error) {
       console.error("Error fetching account:", error);
       return res.status(500).json({ error: "Failed to fetch account" });
     }
   },
-
+  
   createAccount: async (req: Request, res: Response) => {
     try {
       // Validate request body
       const validatedData = insertAccountSchema.parse(req.body);
-
+      
       // Check if account name already exists
       const existingAccount = await storage.getAccountByName(validatedData.name);
-
+      
       if (existingAccount) {
         return res.status(400).json({ error: "Account with this name already exists" });
       }
-
+      
       // Create account
       const account = await storage.createAccount(validatedData);
-
+      
       // Log audit trail
       const userId = (req as any).user?.id;
       await storage.createAuditLog({
@@ -451,48 +551,48 @@ export const financeController = {
         entityId: account.id,
         details: { name: account.name, type: account.type }
       });
-
+      
       return res.status(201).json(account);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors });
       }
-
+      
       console.error("Error creating account:", error);
       return res.status(500).json({ error: "Failed to create account" });
     }
   },
-
+  
   updateAccount: async (req: Request, res: Response) => {
     try {
       const accountId = parseInt(req.params.id);
-
+      
       if (isNaN(accountId)) {
         return res.status(400).json({ error: "Invalid account ID" });
       }
-
+      
       // Get existing account
       const existingAccount = await storage.getAccount(accountId);
-
+      
       if (!existingAccount) {
         return res.status(404).json({ error: "Account not found" });
       }
-
+      
       // Validate request body (partial update)
       const validatedData = insertAccountSchema.partial().parse(req.body);
-
+      
       // If name is changing, check if it already exists
       if (validatedData.name && validatedData.name !== existingAccount.name) {
         const nameExists = await storage.getAccountByName(validatedData.name);
-
+        
         if (nameExists) {
           return res.status(400).json({ error: "Account with this name already exists" });
         }
       }
-
+      
       // Update account
       const updatedAccount = await storage.updateAccount(accountId, validatedData);
-
+      
       // Log audit trail
       const userId = (req as any).user?.id;
       await storage.createAuditLog({
@@ -502,33 +602,34 @@ export const financeController = {
         entityId: accountId,
         details: { changes: validatedData }
       });
-
+      
       return res.status(200).json(updatedAccount);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors });
       }
-
+      
       console.error("Error updating account:", error);
       return res.status(500).json({ error: "Failed to update account" });
     }
   },
-
+  
+  // Exchange rate endpoints
   getExchangeRates: async (req: Request, res: Response) => {
     try {
       const baseCurrency = req.query.baseCurrency as string;
       const targetCurrency = req.query.targetCurrency as string;
-
+      
       if (baseCurrency && targetCurrency) {
         const rate = await storage.getExchangeRate(baseCurrency, targetCurrency);
-
+        
         if (!rate) {
           return res.status(404).json({ error: "Exchange rate not found" });
         }
-
+        
         return res.status(200).json(rate);
       }
-
+      
       // For demo, return some sample exchange rates
       return res.status(200).json([
         { baseCurrency: "USD", targetCurrency: "EUR", rate: 0.92, date: new Date() },
@@ -540,15 +641,15 @@ export const financeController = {
       return res.status(500).json({ error: "Failed to fetch exchange rates" });
     }
   },
-
+  
   createExchangeRate: async (req: Request, res: Response) => {
     try {
       // Validate request body
       const validatedData = insertExchangeRateSchema.parse(req.body);
-
+      
       // Create exchange rate
       const rate = await storage.createExchangeRate(validatedData);
-
+      
       // Log audit trail
       const userId = (req as any).user?.id;
       await storage.createAuditLog({
@@ -558,36 +659,37 @@ export const financeController = {
         entityId: rate.id,
         details: { baseCurrency: rate.baseCurrency, targetCurrency: rate.targetCurrency, rate: rate.rate }
       });
-
+      
       return res.status(201).json(rate);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors });
       }
-
+      
       console.error("Error creating exchange rate:", error);
       return res.status(500).json({ error: "Failed to create exchange rate" });
     }
   },
-
+  
+  // Reports endpoints
   getCashFlowReport: async (req: Request, res: Response) => {
     try {
       // Get transactions for cash flow calculation
       const transactions = await storage.getTransactions();
-
+      
       // In a real app, you would filter by date range from query params
       const startDate = req.query.startDate ? new Date(req.query.startDate as string) : new Date(new Date().setMonth(new Date().getMonth() - 6));
       const endDate = req.query.endDate ? new Date(req.query.endDate as string) : new Date();
-
+      
       // Filter transactions by date
-      const filteredTransactions = transactions.filter(tx =>
+      const filteredTransactions = transactions.filter(tx => 
         tx.date >= startDate && tx.date <= endDate
       );
-
+      
       // Calculate cash inflows and outflows
       let inflows = 0;
       let outflows = 0;
-
+      
       filteredTransactions.forEach(tx => {
         if (tx.type === "income") {
           inflows += Number(tx.amount);
@@ -595,10 +697,10 @@ export const financeController = {
           outflows += Number(tx.amount);
         }
       });
-
+      
       // Calculate net cash flow
       const netCashFlow = inflows - outflows;
-
+      
       // Generate monthly data
       const monthlyData = [
         { month: "Jan", inflow: 95000, outflow: 62000 },
@@ -608,7 +710,7 @@ export const financeController = {
         { month: "May", inflow: 122000, outflow: 75000 },
         { month: "Jun", inflow: 130000, outflow: 80000 }
       ];
-
+      
       // Return report data
       return res.status(200).json({
         title: "Cash Flow Report",
@@ -625,31 +727,31 @@ export const financeController = {
       return res.status(500).json({ error: "Failed to generate cash flow report" });
     }
   },
-
+  
   getIncomeStatementReport: async (req: Request, res: Response) => {
     try {
       // Get revenue and expense accounts
       const revenueAccount = await storage.getAccountByName("Revenue");
       const expensesAccount = await storage.getAccountByName("Expenses");
-
+      
       // Calculate net income
       const revenue = Number(revenueAccount?.balance || 0);
       const expenses = Number(expensesAccount?.balance || 0);
       const netIncome = revenue - expenses;
-
+      
       // Generate category breakdown
       const revenueBreakdown = [
         { category: "Services Revenue", amount: revenue * 0.65 },
         { category: "Product Sales", amount: revenue * 0.35 }
       ];
-
+      
       const expenseBreakdown = [
         { category: "Materials", amount: expenses * 0.45 },
         { category: "Labor", amount: expenses * 0.3 },
         { category: "Equipment", amount: expenses * 0.15 },
         { category: "Other", amount: expenses * 0.1 }
       ];
-
+      
       // Return report data
       return res.status(200).json({
         title: "Income Statement",
@@ -669,20 +771,20 @@ export const financeController = {
       return res.status(500).json({ error: "Failed to generate income statement" });
     }
   },
-
+  
   getBalanceSheetReport: async (req: Request, res: Response) => {
     try {
       // Get all accounts
       const accounts = await storage.getAccounts();
-
+      
       // Calculate assets, liabilities, and equity
       let totalAssets = 0;
       let totalLiabilities = 0;
       let totalEquity = 0;
-
+      
       accounts.forEach(account => {
         const balance = Number(account.balance);
-
+        
         if (account.type === "asset") {
           totalAssets += balance;
         } else if (account.type === "liability") {
@@ -691,7 +793,7 @@ export const financeController = {
           totalEquity += balance;
         }
       });
-
+      
       // Generate account breakdown
       const assetAccounts = accounts
         .filter(account => account.type === "asset")
@@ -699,21 +801,21 @@ export const financeController = {
           name: account.name,
           balance: Number(account.balance)
         }));
-
+      
       const liabilityAccounts = accounts
         .filter(account => account.type === "liability")
         .map(account => ({
           name: account.name,
           balance: Number(account.balance)
         }));
-
+      
       const equityAccounts = accounts
         .filter(account => account.type === "equity")
         .map(account => ({
           name: account.name,
           balance: Number(account.balance)
         }));
-
+      
       // Return report data
       return res.status(200).json({
         title: "Balance Sheet",
@@ -734,15 +836,16 @@ export const financeController = {
       return res.status(500).json({ error: "Failed to generate balance sheet" });
     }
   },
-
+  
+  // Audit log endpoints
   getAuditLogs: async (req: Request, res: Response) => {
     try {
       const entityType = req.query.entityType as string | undefined;
       const entityId = req.query.entityId ? parseInt(req.query.entityId as string) : undefined;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-
+      
       const logs = await storage.getAuditLogs(entityType, entityId, limit);
-
+      
       return res.status(200).json(logs);
     } catch (error) {
       console.error("Error fetching audit logs:", error);
