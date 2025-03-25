@@ -16,6 +16,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 const Sidebar = () => {
   const [location] = useLocation();
   const { user } = useAuth();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [openMenus, setOpenMenus] = useState({
     finance: true,
     projects: false,
@@ -51,7 +53,30 @@ const Sidebar = () => {
               type="text"
               className="pl-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                // Implement search logic here
+                const results = [
+                  ...dummyData.projects.filter(p => 
+                    p.name.toLowerCase().includes(e.target.value.toLowerCase())
+                  ),
+                  ...dummyData.inventory.filter(i => 
+                    i.name.toLowerCase().includes(e.target.value.toLowerCase())
+                  )
+                ];
+                setSearchResults(results);
+              }}
             />
+            {searchTerm && (
+              <div className="absolute w-full mt-1 bg-white dark:bg-gray-700 rounded-md shadow-lg z-50">
+                {searchResults.map((result) => (
+                  <div key={result.id} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
+                    {result.name}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

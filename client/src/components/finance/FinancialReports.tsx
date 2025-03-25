@@ -522,3 +522,53 @@ const FinancialReports = () => {
 };
 
 export default FinancialReports;
+import { useState } from 'react';
+import { Download } from 'lucide-react';
+
+const FinancialReports = () => {
+  const [dateRange, setDateRange] = useState('7');
+  
+  const handleExport = () => {
+    const reportData = {
+      // Your report data here
+      title: "Financial Report",
+      date: new Date().toISOString(),
+      data: [] // Add your report data
+    };
+    
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `financial-report-${new Date().toISOString()}.json`;
+    a.click();
+  };
+
+  return (
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-4">
+        <select 
+          value={dateRange}
+          onChange={(e) => setDateRange(e.target.value)}
+          className="border rounded p-2"
+        >
+          <option value="7">Last 7 Days</option>
+          <option value="30">Last 30 Days</option>
+          <option value="90">Last 90 Days</option>
+        </select>
+        
+        <button
+          onClick={handleExport}
+          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded"
+        >
+          <Download size={16} />
+          Export Report
+        </button>
+      </div>
+      
+      {/* Your report content here */}
+    </div>
+  );
+};
+
+export default FinancialReports;
